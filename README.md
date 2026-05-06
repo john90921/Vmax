@@ -35,7 +35,7 @@ After changing `.env`, restart Expo.
 Start Expo:
 
 ```bash
-npm start
+npx expo start
 ```
 
 Then choose one of these:
@@ -52,3 +52,33 @@ npm run android
 npm run ios
 npm run web
 ```
+
+## Project Structure
+
+### `/app` - Routes & Pages
+
+The main application structure using Expo Router for file-based routing.
+
+### `/assets` - Static Resources
+
+Images, icons, and other static assets used throughout the app.
+
+### `/components` - Reusable UI Components
+
+Modular, reusable React Native components used across screens.
+
+### `/constants` - App Configuration
+
+Global constants and configuration values.
+
+### `/contexts` - React Context Providers
+
+Global state management and context providers.
+
+### `/hooks` - Custom React Hooks
+
+Custom hooks for reusable logic.
+
+### `/services` - API & External Services
+
+API client and external service integrations.
