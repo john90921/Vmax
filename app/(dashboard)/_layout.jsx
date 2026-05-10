@@ -2,12 +2,18 @@ import { Tabs } from "expo-router";
 import { useColorScheme } from "react-native";
 import { Colors } from "../../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
+import { usePathname } from "expo-router";
 
 import UserOnly from "../../components/auth/UserOnly";
+import FloatingChatButton from "../../components/chatbot/FloatingChatButton";
 
 export default function DashboardLayout() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme] ?? Colors.light;
+  const pathname = usePathname();
+
+  // Show floating button on all dashboard pages except profile
+  const showFloatingButton = !pathname.includes("/profile");
 
   return (
     // UserOnly will function correctly after auth logic is implemented
@@ -77,6 +83,7 @@ export default function DashboardLayout() {
           }}
         />
       </Tabs>
+      {showFloatingButton && <FloatingChatButton />}
     </UserOnly>
   );
 }
