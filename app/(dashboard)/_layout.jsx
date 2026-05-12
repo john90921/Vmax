@@ -1,9 +1,9 @@
 import { Tabs } from "expo-router";
-import { useColorScheme } from "react-native";
-import { Colors } from "../../constants/Colors";
+import { View, Pressable, useColorScheme } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { usePathname } from "expo-router";
 
+import { Colors } from "../../constants/Colors";
 import UserOnly from "../../components/auth/UserOnly";
 import FloatingChatButton from "../../components/chatbot/FloatingChatButton";
 
@@ -31,7 +31,7 @@ export default function DashboardLayout() {
         }}
       >
         <Tabs.Screen
-          name="myGoal/index"
+          name="myGoal"
           options={{
             title: "Home",
             tabBarIcon: ({ focused }) => (
@@ -44,7 +44,7 @@ export default function DashboardLayout() {
           }}
         />
         <Tabs.Screen
-          name="groupGoal/index"
+          name="groupGoal"
           options={{
             title: "Group Goals",
             tabBarIcon: ({ focused }) => (
@@ -57,20 +57,20 @@ export default function DashboardLayout() {
           }}
         />
         <Tabs.Screen
-          name="expenses/index"
+          name="expenses"
           options={{
-            title: "Spending Log",
+            title: "Expenses",
             tabBarIcon: ({ focused }) => (
               <Ionicons
                 size={24}
-                name={focused ? "cash" : "cash-outline"}
+                name={focused ? "receipt" : "receipt-outline"}
                 color={focused ? theme.iconColorFocused : theme.iconColor}
               />
             ),
           }}
         />
         <Tabs.Screen
-          name="profile/index"
+          name="profile"
           options={{
             title: "My Profile",
             tabBarIcon: ({ focused }) => (

@@ -1,20 +1,21 @@
 import {
   StyleSheet,
-  Text,
   Keyboard,
   TouchableWithoutFeedback,
+  Text,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { useUser } from "../../hooks/useUser";
 
 import ThemedView from "../../components/ThemedView";
+import ThemedScrollView from "../../components/ThemedScrollView";
 import ThemedText from "../../components/ThemedText";
 import Spacer from "../../components/Spacer";
 import ThemedButton from "../../components/ThemedButton";
 import ThemedTextInput from "../../components/ThemedTextInput";
+import ThemedLogo from "../../components/ThemedLogo";
 import { Colors } from "../../constants/Colors";
-import { useRouter } from "expo-router";
+import { useUser } from "../../hooks/useUser";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +25,7 @@ const Login = () => {
   const router = useRouter();
   const { user, login } = useUser();
 
-  const handleSubmit = async () => {
+  const handleLogin = async () => {
     setError(null);
     try {
       await login(email, password);
@@ -35,40 +36,46 @@ const Login = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ThemedView style={styles.container}>
-        <Spacer />
-        <ThemedText title={true} style={styles.title}>
-          Login to Your Account
-        </ThemedText>
+      <ThemedView safe={true} safeEdges={["top", "right", "bottom", "left"]}>
+        <ThemedScrollView>
+          <Spacer />
+          <ThemedLogo style={styles.logo} />
 
-        <Spacer />
-        <ThemedTextInput
-          style={{ marginBottom: 20, width: "80%" }}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        <ThemedTextInput
-          style={{ marginBottom: 20, width: "80%" }}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <ThemedButton onPress={handleSubmit}>
-          <Text style={{ color: "#f2f2f2" }}>Login</Text>
-        </ThemedButton>
-
-        <Spacer />
-        {error && <Text style={styles.error}>{error}</Text>}
-
-        <Spacer height={100} />
-        <Link href="/register" replace>
-          <ThemedText style={{ textAlign: "center" }}>
-            Register instead
+          <Spacer />
+          <ThemedText title={true} style={styles.title}>
+            Welcome Back!
           </ThemedText>
-        </Link>
+
+          <Spacer />
+          <ThemedTextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+          <ThemedTextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <ThemedButton onPress={handleLogin} style={styles.loginBtn}>
+            <ThemedText title={true} style={styles.loginText}>
+              LOGIN
+            </ThemedText>
+          </ThemedButton>
+          {error && <Text style={styles.error}>{error}</Text>}
+
+          <Spacer />
+          <Link href="/register" replace>
+            <ThemedText>
+              New User?{" "}
+              <ThemedText title={true} style={styles.signUpText}>
+                Sign Up
+              </ThemedText>
+            </ThemedText>
+          </Link>
+        </ThemedScrollView>
       </ThemedView>
     </TouchableWithoutFeedback>
   );
@@ -77,15 +84,21 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  logo: {
+    width: 200,
+    height: 200,
   },
   title: {
     textAlign: "center",
-    fontSize: 18,
+    fontSize: 25,
     marginBottom: 30,
+  },
+  loginBtn: {
+    width: "80%",
+  },
+  loginText: {
+    color: "#f2f2f2",
+    fontSize: 16,
   },
   error: {
     color: Colors.warning,
@@ -95,5 +108,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 6,
     marginHorizontal: 10,
+  },
+  signUpText: {
+    color: "#8969c9",
+    fontSize: 16,
   },
 });

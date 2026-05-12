@@ -40,7 +40,6 @@ export default Home;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
     paddingTop: 200,
   },
@@ -50,7 +49,6 @@ const styles = StyleSheet.create({
   },
   appName: {
     fontSize: 50,
-    fontWeight: "bold",
     fontStyle: "italic",
   },
 });
