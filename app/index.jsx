@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 import { Redirect } from "expo-router";
 
 import ThemedView from "../components/ThemedView";
@@ -12,14 +12,21 @@ import { useUser } from "../hooks/useUser";
 const Home = () => {
   const { user, authChecked } = useUser();
   const [splashReady, setSplashReady] = useState(false);
+  const [fadeOpacity] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setSplashReady(true);
     }, 1500);
 
+    Animated.timing(fadeOpacity, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+
     return () => clearTimeout(timer);
-  }, []);
+  }, [fadeOpacity]);
 
   if (authChecked && splashReady) {
     return <Redirect href={user ? "/myGoal" : "/login"} />;
@@ -27,11 +34,13 @@ const Home = () => {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedLogo style={styles.logo} />
-      <Spacer />
-      <ThemedText style={styles.appName} title={true}>
-        Vmax
-      </ThemedText>
+      <Animated.View style={[styles.fadeContent, { opacity: fadeOpacity }]}>
+        <ThemedLogo style={styles.logo} />
+        <Spacer />
+        <ThemedText style={styles.appName} title={true}>
+          Vmax
+        </ThemedText>
+      </Animated.View>
     </ThemedView>
   );
 };
@@ -42,6 +51,9 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     paddingTop: 200,
+  },
+  fadeContent: {
+    alignItems: "center",
   },
   logo: {
     width: 200,
