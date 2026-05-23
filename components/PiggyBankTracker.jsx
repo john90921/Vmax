@@ -43,8 +43,8 @@ const PALETTE = {
 };
 
 // The SVG viewBox is 508x508, we scale it down
-const PIG_W = 150;
-const PIG_H = 150;
+const PIG_W = 120;
+const PIG_H = 120;
 const SCALE = PIG_W / 508;
 
 // ── Coin drop ─────────────────────────────────────────────────────────────────
@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
   pigShadow: {
     position: 'absolute',
     bottom: 0,
-    width: 140,
+    width: 130,
     height: 14,
     borderRadius: 70,
     backgroundColor: 'rgba(180,100,80,0.15)',

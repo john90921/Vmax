@@ -1,5 +1,5 @@
 import { Stack, useRouter } from "expo-router";
-import { View, Pressable } from "react-native";
+import { View, Pressable, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useTheme } from "../../../hooks/useTheme";
@@ -17,6 +17,7 @@ export default function GroupGoalLayout() {
         headerTitleAlign: "center",
       }}
     >
+      {/* ── Group list ── */}
       <Stack.Screen
         name="index"
         options={{
@@ -25,9 +26,7 @@ export default function GroupGoalLayout() {
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Pressable
                 onPress={() => {}}
-                style={({ pressed }) => ({
-                  opacity: pressed ? 0.7 : 1,
-                })}
+                style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
               >
                 <Ionicons
                   name="notifications"
@@ -37,12 +36,8 @@ export default function GroupGoalLayout() {
                 />
               </Pressable>
               <Pressable
-                onPress={() => {
-                  // router.push("/groupGoal/add-groupgoal");
-                }}
-                style={({ pressed }) => ({
-                  opacity: pressed ? 0.7 : 1,
-                })}
+                onPress={() => router.push("/(dashboard)/groupGoal/create-group")}
+                style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
               >
                 <Ionicons
                   name="add-circle"
@@ -53,6 +48,43 @@ export default function GroupGoalLayout() {
               </Pressable>
             </View>
           ),
+        }}
+      />
+
+      {/* ── Create a new group ── */}
+      <Stack.Screen
+        name="create-group"
+        options={{
+          headerTitle: "Create Group Goal",
+          headerBackVisible: false,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons name="close" size={28} color={theme.iconColor} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+
+      {/* ── Join via invite code ── */}
+      <Stack.Screen
+        name="join-group"
+        options={{
+          headerTitle: "Join a Group",
+          headerBackVisible: false,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons name="close" size={28} color={theme.iconColor} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+
+      {/* ── Group detail (drill-down) ── */}
+      <Stack.Screen
+        name="group-detail"
+        options={{
+          headerTitle: "Group Details",
+          headerBackVisible: true,
         }}
       />
     </Stack>
