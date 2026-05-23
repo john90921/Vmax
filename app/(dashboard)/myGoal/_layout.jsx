@@ -25,9 +25,7 @@ export default function MyGoalLayout() {
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Pressable
                 onPress={() => {}}
-                style={({ pressed }) => ({
-                  opacity: pressed ? 0.7 : 1,
-                })}
+                style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
               >
                 <Ionicons
                   name="notifications"
@@ -37,12 +35,8 @@ export default function MyGoalLayout() {
                 />
               </Pressable>
               <Pressable
-                onPress={() => {
-                  router.push("/myGoal/add-mygoal");
-                }}
-                style={({ pressed }) => ({
-                  opacity: pressed ? 0.7 : 1,
-                })}
+                onPress={() => router.push("/myGoal/add-mygoal")}
+                style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
               >
                 <Ionicons
                   name="add-circle"
