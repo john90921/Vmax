@@ -17,7 +17,7 @@ function ThemedButton({ style, ...props }) {
     />
   );
 }
-
+//oko
 const styles = StyleSheet.create({
   btn: {
     padding: 18,
