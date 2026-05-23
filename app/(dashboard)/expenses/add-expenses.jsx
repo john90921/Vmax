@@ -1,6 +1,14 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import { Link, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Modal,
+  Animated,
+  Image,
+  Text,
+  Dimensions,
+} from "react-native";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 import ThemedView from "../../../components/ThemedView";
@@ -28,6 +36,7 @@ function AddExpenses() {
       <ThemedScrollView contentContainerStyle={styles.content}>
         {isUploadMode ? <UploadReceipt /> : <ManualEntry />}
       </ThemedScrollView>
+      <CoinModal />
     </ThemedView>
   );
 }
@@ -108,6 +117,9 @@ const UploadReceipt = () => {
       />
       <ThemedButton
         style={[styles.saveButton, { backgroundColor: primaryColor }]}
+        onPress={() => {
+          global.__showExpenseCoinModal && global.__showExpenseCoinModal();
+        }}
       >
         <ThemedText style={styles.saveButtonText}>Save Expense</ThemedText>
       </ThemedButton>
@@ -202,12 +214,234 @@ const ManualEntry = () => {
       />
       <ThemedButton
         style={[styles.saveButton, { backgroundColor: primaryColor }]}
+        onPress={() => {
+          global.__showExpenseCoinModal && global.__showExpenseCoinModal();
+        }}
       >
         <ThemedText style={styles.saveButtonText}>Save Expense</ThemedText>
       </ThemedButton>
     </ThemedCard>
   );
 };
+
+function CoinModal() {
+  const [visible, setVisible] = useState(false);
+  const router = useRouter();
+  const { theme } = useTheme();
+  const COIN_COUNT = 1;
+  const coins = useRef(
+    new Array(COIN_COUNT).fill(0).map(() => ({
+      translateY: new Animated.Value(0),
+      translateX: new Animated.Value(0),
+      rotate: new Animated.Value(0),
+      scale: new Animated.Value(1),
+    })),
+  ).current;
+  const ellipsisDots = useRef(
+    [0, 1, 2].map(() => new Animated.Value(0.35)),
+  ).current;
+
+  useEffect(() => {
+    if (!visible) {
+      ellipsisDots.forEach((dot) => dot.setValue(0.35));
+      return undefined;
+    }
+
+    const loops = ellipsisDots.map((dot, index) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(index * 120),
+          Animated.timing(dot, {
+            toValue: 1,
+            duration: 220,
+            useNativeDriver: true,
+          }),
+          Animated.timing(dot, {
+            toValue: 0.35,
+            duration: 220,
+            useNativeDriver: true,
+          }),
+        ]),
+      ),
+    );
+
+    loops.forEach((loop) => loop.start());
+
+    return () => {
+      loops.forEach((loop) => loop.stop());
+      ellipsisDots.forEach((dot) => dot.setValue(0.35));
+    };
+  }, [ellipsisDots, visible]);
+
+  const show = () => {
+    setVisible(true);
+
+    coins.forEach((c) => {
+      c.translateY.setValue(0);
+      c.translateX.setValue(0);
+      c.rotate.setValue(0);
+      c.scale.setValue(1);
+    });
+
+    const allAnim = coins.map((c, i) => {
+      const toRight = 80 + i * 28;
+      return Animated.sequence([
+        Animated.timing(c.translateY, {
+          toValue: -110 - i * 6,
+          duration: 260,
+          useNativeDriver: true,
+        }),
+        Animated.parallel([
+          Animated.timing(c.translateY, {
+            toValue: 200,
+            duration: 1050,
+            useNativeDriver: true,
+          }),
+          Animated.timing(c.translateX, {
+            toValue: toRight,
+            duration: 1050,
+            useNativeDriver: true,
+          }),
+          Animated.timing(c.rotate, {
+            toValue: 1440,
+            duration: 1050,
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.sequence([
+          Animated.timing(c.translateY, {
+            toValue: 160,
+            duration: 160,
+            useNativeDriver: true,
+          }),
+          Animated.timing(c.translateY, {
+            toValue: 200,
+            duration: 160,
+            useNativeDriver: true,
+          }),
+          Animated.timing(c.translateY, {
+            toValue: 182,
+            duration: 120,
+            useNativeDriver: true,
+          }),
+          Animated.timing(c.translateY, {
+            toValue: 200,
+            duration: 120,
+            useNativeDriver: true,
+          }),
+          Animated.timing(c.translateY, {
+            toValue: 192,
+            duration: 90,
+            useNativeDriver: true,
+          }),
+          Animated.timing(c.translateY, {
+            toValue: 200,
+            duration: 90,
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.spring(c.scale, {
+          toValue: 0.92,
+          friction: 3,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+        Animated.spring(c.scale, {
+          toValue: 1,
+          friction: 4,
+          tension: 80,
+          useNativeDriver: true,
+        }),
+      ]);
+    });
+
+    Animated.stagger(120, allAnim).start(() => {
+      router.replace("/expenses");
+    });
+  };
+
+  global.__showExpenseCoinModal = show;
+
+  const flipDegs = coins.map((c) =>
+    c.rotate.interpolate({
+      inputRange: [0, 1440],
+      outputRange: ["0deg", "1440deg"],
+    }),
+  );
+  const spinDegs = coins.map((c) =>
+    c.rotate.interpolate({
+      inputRange: [0, 1440],
+      outputRange: ["0deg", "360deg"],
+    }),
+  );
+
+  return (
+    <Modal transparent={false} visible={visible} animationType="fade">
+      <View
+        style={[styles.modalOverlay, { backgroundColor: theme.background }]}
+      >
+        <View style={styles.fullModalContent}>
+          <View style={styles.modalMessageRow}>
+            <ThemedText style={[styles.modalTitle, { color: theme.text }]}>
+              Saving your expense
+            </ThemedText>
+            <View style={styles.modalDotsWrap}>
+              {ellipsisDots.map((dot, index) => (
+                <Animated.Text
+                  key={index}
+                  style={[
+                    styles.modalDot,
+                    {
+                      color: theme.text,
+                      opacity: dot,
+                      transform: [
+                        {
+                          scale: dot.interpolate({
+                            inputRange: [0.35, 1],
+                            outputRange: [1, 1.55],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
+                  .
+                </Animated.Text>
+              ))}
+            </View>
+          </View>
+          <View style={styles.boxWrap}>
+            <Image
+              source={require("../../../assets/img/money-box.png")}
+              style={styles.moneyBox}
+              resizeMode="contain"
+            />
+
+            {coins.map((c, idx) => (
+              <Animated.View
+                key={idx}
+                style={[
+                  styles.coin,
+                  {
+                    transform: [
+                      { perspective: 900 },
+                      { translateX: c.translateX },
+                      { translateY: c.translateY },
+                      { rotateX: flipDegs[idx] },
+                      { rotateZ: spinDegs[idx] },
+                      { scale: c.scale },
+                    ],
+                    opacity: 0.98,
+                  },
+                ]}
+              />
+            ))}
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
 
 export default AddExpenses;
 
@@ -292,5 +526,71 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "700",
+  },
+  modalOverlay: {
+    flex: 1,
+  },
+  fullModalContent: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    letterSpacing: 0.2,
+    textAlign: "center",
+  },
+  modalMessageRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    marginBottom: 100,
+  },
+  modalDotsWrap: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    marginLeft: 6,
+  },
+  modalDot: {
+    fontSize: 30,
+    fontWeight: "900",
+    lineHeight: 30,
+    marginLeft: 2,
+    textShadowColor: "rgba(0,0,0,0.18)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  boxWrap: {
+    width: 300,
+    height: 240,
+    alignItems: "center",
+    justifyContent: "flex-end",
+    position: "relative",
+  },
+  moneyBox: {
+    width: 260,
+    height: 200,
+    position: "absolute",
+    bottom: 0,
+  },
+  coin: {
+    position: "absolute",
+    top: 12,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#E6B800",
+    borderWidth: 3,
+    borderColor: "#FFD54F",
+    left: "50%",
+    marginLeft: -20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 6,
   },
 });
