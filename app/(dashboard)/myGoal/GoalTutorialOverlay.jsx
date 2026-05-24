@@ -88,3 +88,5 @@ const s = StyleSheet.create({
   title: { fontSize: 17, fontWeight: "800", color: T.textDark, marginBottom: 10, letterSpacing: -0.2 },
   desc:  { fontSize: 14, color: T.textMid, lineHeight: 22 },
 });
+
+export default TutorialProvider;
